@@ -1,0 +1,83 @@
+import wx
+import socket
+import threading
+import base64
+import io
+
+# Sunucu adresi ve portu
+HOST = '127.0.0.1'  # Sunucu IP adresi
+PORT = 12345
+
+class ChatClient(wx.Frame):
+    def __init__(self, *args, **kw):
+        super(ChatClient, self).__init__(*args, **kw)
+        
+        self.panel = wx.Panel(self)
+        self.chat_box = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE | wx.TE_READONLY, size=(400, 300))
+        self.message_input = wx.TextCtrl(self.panel, size=(300, 25))
+        self.send_button = wx.Button(self.panel, label="Gönder")
+        
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.chat_box, proportion=1, flag=wx.EXPAND | wx.ALL, border=5)
+        self.sizer.Add(self.message_input, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        self.sizer.Add(self.send_button, proportion=0, flag=wx.EXPAND | wx.ALL, border=5)
+        
+        self.panel.SetSizer(self.sizer)
+        
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client_socket.connect((HOST, PORT))
+        
+        self.Bind(wx.EVT_BUTTON, self.on_send, self.send_button)
+        
+        # Mesaj almak için ayrı bir thread başlatıyoruz
+        threading.Thread(target=self.receive_message, args=(self.client_socket, self.chat_box), daemon=True).start()
+
+    def on_send(self, event):
+        message = self.message_input.GetValue()
+        if message:
+            self.chat_box.AppendText(f"Ben: {message}\n")
+            self.client_socket.send(message.encode('utf-8'))
+            self.message_input.Clear()
+
+    def receive_message(self, client_socket, chat_box):
+        while True:
+            try:
+                message = client_socket.recv(1024).decode('utf-8')
+                if message.startswith("PHOTO:"):
+                    self.display_photo(message.split(":")[1])
+                else:
+                    chat_box.AppendText(f"Diğer: {message}\n")
+            except:
+                break
+
+    def display_photo(self, encoded_photo):
+        photo_data = base64.b64decode(encoded_photo)
+        image_stream = io.BytesIO(photo_data)
+        image = wx.Image(image_stream, wx.BITMAP_TYPE_ANY)
+
+        # Resmi açmak için bir pencere
+        image_frame = wx.Frame(self, title="Fotoğraf", size=(600, 600))
+        image_panel = wx.Panel(image_frame)
+        img_ctrl = wx.StaticBitmap(image_panel, bitmap=image.ConvertToBitmap())
+        
+        # İndir butonu ekleyelim
+        download_button = wx.Button(image_panel, label="İndir", pos=(10, 550))
+        download_button.Bind(wx.EVT_BUTTON, lambda event: self.download_image(photo_data))
+
+        image_frame.Show()
+
+    def download_image(self, photo_data):
+        with wx.FileDialog(self, "Fotoğrafı kaydedin", wildcard="Image files (*.png;*.jpg)|*.png;*.jpg", style=wx.FD_SAVE) as file_dialog:
+            if file_dialog.ShowModal() == wx.ID_OK:
+                file_path = file_dialog.GetPath()
+                with open(file_path, 'wb') as file:
+                    file.write(photo_data)
+
+def main():
+    app = wx.App(False)
+    frame = ChatClient(None, title="WhatsApp Benzeri Uygulama", size=(500, 400))
+    frame.Show()
+    app.MainLoop()
+
+if __name__ == "__main__":
+    main()
