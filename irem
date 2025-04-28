@@ -1,0 +1,35 @@
+# Client.py
+import socket
+import threading
+
+SERVER_IP = '127.0.0.1'  # Eğer server başka bilgisayardaysa onun IP adresini yaz
+PORT = 12345
+
+def receive_messages(sock):
+    while True:
+        try:
+            message = sock.recv(1024).decode()
+            if message:
+                print("\n[Mesaj]:", message)
+            else:
+                break
+        except:
+            break
+
+def main():
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((SERVER_IP, PORT))
+
+    phone_number = input("Telefon numaranı gir (+90 ile): ")
+    client.send(phone_number.encode())
+
+    threading.Thread(target=receive_messages, args=(client,), daemon=True).start()
+
+    while True:
+        to_number = input("\nMesaj göndereceğin numara (+90 ile): ")
+        message = input("Mesajın: ")
+        full_message = f"{to_number}:{message}"
+        client.send(full_message.encode())
+
+if __name__ == "__main__":
+    main()
