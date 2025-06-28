@@ -1,0 +1,68 @@
+import pyttsx3
+import speech_recognition as sr
+import pyautogui
+import webbrowser
+import time
+
+engine = pyttsx3.init()
+
+def konus(metin):
+    print("Asistan:", metin)
+    engine.say(metin)
+    engine.runAndWait()
+
+def komut_al():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Komut bekleniyor...")
+        audio = r.listen(source)
+    try:
+        return r.recognize_google(audio, language="tr-TR").lower()
+    except:
+        konus("Anlayamadım.")
+        return ""
+
+def google_arama(yazi):
+    konus(f"{yazi} aranıyor.")
+    webbrowser.open(f"https://www.google.com/search?q={yazi}")
+    time.sleep(5)
+    pyautogui.press("tab")  # İlk sonuca geç
+    pyautogui.press("enter")  # Tıkla
+
+def asagi_kaydir():
+    pyautogui.scroll(-500)
+    konus("Aşağı kaydırıldı.")
+
+def yukari_kaydir():
+    pyautogui.scroll(500)
+    konus("Yukarı kaydırıldı.")
+
+def tikla():
+    pyautogui.click()
+    konus("Tıklandı.")
+
+# Başlatıcı
+konus("Google asistan hazır.")
+
+while True:
+    komut = komut_al()
+
+    if "çık" in komut or "kapat" in komut:
+        konus("Görüşürüz.")
+        break
+
+    elif "kaydır" in komut and "aşağı" in komut:
+        asagi_kaydir()
+
+    elif "kaydır" in komut and "yukarı" in komut:
+        yukari_kaydir()
+
+    elif "tıkla" in komut:
+        tikla()
+
+    elif "ara" in komut or "aç" in komut:
+        konus("Ne aramamı istersin?")
+        arama = komut_al()
+        google_arama(arama)
+
+
