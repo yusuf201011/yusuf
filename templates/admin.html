@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Paneli - Spor Sitesi{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="py-5 bg-dark text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-cog me-3"></i>Admin Paneli
+                </h1>
+                <p class="lead">Site yönetimi ve içerik kontrolü</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Cards -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-newspaper mb-3" style="font-size: 3rem;"></i>
+                        <h3 class="card-title">{{ news_count }}</h3>
+                        <p class="card-text">Toplam Haber</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users mb-3" style="font-size: 3rem;"></i>
+                        <h3 class="card-title">{{ user_count }}</h3>
+                        <p class="card-text">Toplam Kullanıcı</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card bg-warning text-white">
+                    <div class="card-body text-center">
+                        <i class="fas fa-trophy mb-3" style="font-size: 3rem;"></i>
+                        <h3 class="card-title">{{ match_count }}</h3>
+                        <p class="card-text">Toplam Maç</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Admin Actions -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-5">Yönetim İşlemleri</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-plus-circle text-primary mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Haber Ekle</h5>
+                        <p class="card-text">Yeni spor haberleri ekleyin ve yayınlayın.</p>
+                        <a href="{{ url_for('admin_add_news') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Haber Ekle
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-calendar-plus text-success mb-3" style="font-size: 3rem;"></i>
+                        <h5 class="card-title">Maç Ekle</h5>
+                        <p class="card-text">Yeni maç programları ve sonuçları ekleyin.</p>
+                        <a href="{{ url_for('admin_add_match') }}" class="btn btn-success">
+                            <i class="fas fa-plus me-2"></i>Maç Ekle
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Links -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-5">Hızlı Erişim</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-newspaper text-primary mb-3" style="font-size: 2rem;"></i>
+                        <h6 class="card-title">Haberler</h6>
+                        <a href="{{ url_for('news') }}" class="btn btn-outline-primary btn-sm">Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-trophy text-success mb-3" style="font-size: 2rem;"></i>
+                        <h6 class="card-title">Maçlar</h6>
+                        <a href="{{ url_for('matches') }}" class="btn btn-outline-success btn-sm">Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-home text-info mb-3" style="font-size: 2rem;"></i>
+                        <h6 class="card-title">Ana Sayfa</h6>
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-info btn-sm">Görüntüle</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-cog text-warning mb-3" style="font-size: 2rem;"></i>
+                        <h6 class="card-title">Ayarlar</h6>
+                        <button class="btn btn-outline-warning btn-sm" disabled>Yakında</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

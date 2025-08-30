@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Haber Ekle - Admin Paneli{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-plus-circle me-3"></i>Haber Ekle
+                </h1>
+                <p class="lead">Yeni spor haberi ekleyin</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add News Form -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Haber Başlığı</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Kategori</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Kategori seçin</option>
+                                    <option value="futbol">Futbol</option>
+                                    <option value="basketbol">Basketbol</option>
+                                    <option value="voleybol">Voleybol</option>
+                                    <option value="tenis">Tenis</option>
+                                    <option value="diger">Diğer</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="image_url" class="form-label">Resim URL (İsteğe bağlı)</label>
+                                <input type="url" class="form-control" id="image_url" name="image_url" placeholder="https://example.com/image.jpg">
+                                <div class="form-text">Haber için resim URL'si ekleyebilirsiniz.</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="content" class="form-label">Haber İçeriği</label>
+                                <textarea class="form-control" id="content" name="content" rows="10" required placeholder="Haber içeriğini buraya yazın..."></textarea>
+                            </div>
+                            
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-save me-2"></i>Haberi Kaydet
+                                </button>
+                                <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,119 +1,162 @@
-import wx
-import datetime
-import threading
-import time
-import cv2
+# 🏆 Spor Sitesi
 
-class RandevuUygulamasi(wx.Frame):
-    def __init__(self, parent, title):
-        super().__init__(parent, title=title, size=(700, 700))
-        
-        self.randevular = []  # Randevu listesi
-        
-        # Ana panel
-        panel = wx.Panel(self)
-        panel.SetBackgroundColour("#F0F8FF")
-        
-        # Başlık
-        self.label = wx.StaticText(panel, label="Randevu Uygulamasına Hoş Geldiniz!", pos=(200, 20))
-        font = wx.Font(14, wx.FONTFAMILY_SWISS, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_BOLD)
-        self.label.SetFont(font)
-        self.label.SetForegroundColour("#2F4F4F")
-        
-        # Butonlar
-        ekle_btn = wx.Button(panel, label="Randevu Ekle", pos=(50, 100), size=(150, 50))
-        ekle_btn.SetBackgroundColour("#ADD8E6")
-        ekle_btn.SetForegroundColour("#000000")
-        
-        sil_btn = wx.Button(panel, label="Randevu Sil", pos=(250, 100), size=(150, 50))
-        sil_btn.SetBackgroundColour("#FFB6C1")
-        sil_btn.SetForegroundColour("#000000")
-        
-        listele_btn = wx.Button(panel, label="Randevuları Listele", pos=(450, 100), size=(150, 50))
-        listele_btn.SetBackgroundColour("#90EE90")
-        listele_btn.SetForegroundColour("#000000")
-        
-        cikis_btn = wx.Button(panel, label="Çıkış", pos=(300, 200), size=(100, 40))
-        cikis_btn.SetBackgroundColour("#FFA07A")
-        cikis_btn.SetForegroundColour("#000000")
-        
-        # Kamera alanı
-        self.camera_panel = wx.Panel(panel, pos=(50, 300), size=(600, 300))
-        self.camera_panel.SetBackgroundColour("#000000")
-        
-        # Event bağlama
-        ekle_btn.Bind(wx.EVT_BUTTON, self.randevu_ekle)
-        sil_btn.Bind(wx.EVT_BUTTON, self.randevu_sil)
-        listele_btn.Bind(wx.EVT_BUTTON, self.randevulari_listele)
-        cikis_btn.Bind(wx.EVT_BUTTON, self.cikis)
-        
-        # Kamera başlat
-        self.init_camera()
-        
-        # Randevu kontrolü için bir thread başlat
-        self.randevu_kontrol_thread = threading.Thread(target=self.randevu_kontrol)
-        self.randevu_kontrol_thread.daemon = True
-        self.randevu_kontrol_thread.start()
-        
-        self.Show()
-    
-    def init_camera(self):
-        self.capture = cv2.VideoCapture(0)
-        self.timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.update_camera, self.timer)
-        self.timer.Start(100)  # 100ms aralıklarla kamera görüntüsünü güncelle
-    
-    def update_camera(self, event):
-        ret, frame = self.capture.read()
-        if ret:
-            height, width = frame.shape[:2]
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image = wx.Bitmap.FromBuffer(width, height, frame)
-            dc = wx.ClientDC(self.camera_panel)
-            dc.DrawBitmap(image, 0, 0, False)
-    
-    def randevu_ekle(self, event):
-        dialog = wx.TextEntryDialog(self, "Randevu bilgilerini girin (İsim, İşlem, Telefon, Tarih ve Saat):", "Randevu Ekle")
-        if dialog.ShowModal() == wx.ID_OK:
-            randevu_bilgisi = dialog.GetValue()
-            self.randevular.append(randevu_bilgisi)
-            wx.MessageBox("Randevu başarıyla eklendi!", "Bilgi", wx.OK | wx.ICON_INFORMATION)
-        dialog.Destroy()
-    
-    def randevu_sil(self, event):
-        dialog = wx.TextEntryDialog(self, "Silmek istediğiniz randevunun adını girin:", "Randevu Sil")
-        if dialog.ShowModal() == wx.ID_OK:
-            isim = dialog.GetValue()
-            self.randevular = [r for r in self.randevular if not r.startswith(isim)]
-            wx.MessageBox("Randevu başarıyla silindi!", "Bilgi", wx.OK | wx.ICON_INFORMATION)
-        dialog.Destroy()
-    
-    def randevulari_listele(self, event):
-        if not self.randevular:
-            wx.MessageBox("Hiç randevu bulunmamaktadır.", "Bilgi", wx.OK | wx.ICON_INFORMATION)
-        else:
-            randevu_listesi = "\n".join(self.randevular)
-            wx.MessageBox(f"Randevular:\n{randevu_listesi}", "Randevu Listesi", wx.OK | wx.ICON_INFORMATION)
-    
-    def randevu_kontrol(self):
-        while True:
-            now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-            for randevu in self.randevular:
-                if now in randevu:
-                    wx.CallAfter(wx.MessageBox, f"Randevu zamanı geldi: {randevu}", "Hatırlatma", wx.OK | wx.ICON_INFORMATION)
-                    self.randevular.remove(randevu)
-            time.sleep(60)
-    
-    def cikis(self, event):
-        self.Close()
-    
-    def __del__(self):
-        if hasattr(self, 'capture') and self.capture.isOpened():
-            self.capture.release()
-        if hasattr(self, 'timer'):
-            self.timer.Stop()
+Modern ve kullanıcı dostu bir spor haberleri ve maç sonuçları web sitesi. Flask framework'ü kullanılarak geliştirilmiştir.
 
-if __name__ == "__main__":
-    app = wx.App(False)
-    frame = RandevuUygulamasi(None, "Randevu Uygulaması")
-    app.MainLoop()
+## ✨ Özellikler
+
+- 📰 **Spor Haberleri**: Kategorilere ayrılmış güncel spor haberleri
+- ⚽ **Maç Sonuçları**: Canlı ve tamamlanmış maç sonuçları
+- 👥 **Kullanıcı Yönetimi**: Kayıt olma ve giriş yapma sistemi
+- 🔧 **Admin Paneli**: Haber ve maç ekleme yönetimi
+- 📱 **Responsive Tasarım**: Tüm cihazlarda mükemmel görünüm
+- 🎨 **Modern UI**: Bootstrap 5 ile güzel arayüz
+
+## 🚀 Kurulum
+
+### Gereksinimler
+- Python 3.8+
+- pip
+
+### Adımlar
+
+1. **Projeyi klonlayın:**
+```bash
+git clone <repository-url>
+cd spor-sitesi
+```
+
+2. **Sanal ortam oluşturun:**
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# veya
+venv\Scripts\activate  # Windows
+```
+
+3. **Bağımlılıkları yükleyin:**
+```bash
+pip install -r requirements.txt
+```
+
+4. **Uygulamayı çalıştırın:**
+```bash
+python app.py
+```
+
+5. **Tarayıcınızda açın:**
+```
+http://localhost:5000
+```
+
+## 📋 Kullanım
+
+### Normal Kullanıcı
+- Ana sayfada güncel haberleri ve maçları görüntüleyin
+- Haberler sayfasından kategorilere göre filtreleme yapın
+- Maçlar sayfasından spor türü ve duruma göre filtreleme yapın
+- Kayıt olun ve giriş yapın
+
+### Admin Kullanıcı
+- **Giriş bilgileri:**
+  - Kullanıcı adı: `admin`
+  - Şifre: `admin123`
+- Admin panelinden haber ekleyin
+- Maç programları ve sonuçları ekleyin
+- Site istatistiklerini görüntüleyin
+
+## 🏗️ Proje Yapısı
+
+```
+spor-sitesi/
+├── app.py                 # Ana Flask uygulaması
+├── requirements.txt       # Python bağımlılıkları
+├── templates/            # HTML şablonları
+│   ├── base.html         # Ana şablon
+│   ├── index.html        # Ana sayfa
+│   ├── news.html         # Haberler sayfası
+│   ├── news_detail.html  # Haber detayı
+│   ├── matches.html      # Maçlar sayfası
+│   ├── login.html        # Giriş sayfası
+│   ├── register.html     # Kayıt sayfası
+│   ├── admin.html        # Admin paneli
+│   ├── admin_add_news.html    # Haber ekleme
+│   └── admin_add_match.html   # Maç ekleme
+└── static/               # Statik dosyalar
+    ├── css/              # CSS dosyaları
+    ├── js/               # JavaScript dosyaları
+    └── images/           # Resim dosyaları
+```
+
+## 🗄️ Veritabanı Modelleri
+
+### User (Kullanıcı)
+- id, username, email, password_hash, created_at, is_admin
+
+### News (Haber)
+- id, title, content, image_url, category, created_at, author_id
+
+### Match (Maç)
+- id, home_team, away_team, home_score, away_score, match_date, status, sport_type
+
+## 🎨 Teknolojiler
+
+- **Backend**: Flask, SQLAlchemy
+- **Frontend**: Bootstrap 5, Font Awesome
+- **Veritabanı**: SQLite
+- **Dil**: Python 3.8+
+
+## 📱 Özellikler Detayı
+
+### Haberler
+- Kategori bazlı filtreleme (Futbol, Basketbol, Voleybol, Tenis, Diğer)
+- Sayfalama sistemi
+- Haber detay sayfaları
+- İlgili haberler önerisi
+
+### Maçlar
+- Spor türü filtreleme
+- Durum filtreleme (Programlanmış, Canlı, Tamamlanmış)
+- Canlı maç göstergeleri
+- Maç tarih ve saat bilgileri
+
+### Admin Paneli
+- Haber ekleme formu
+- Maç ekleme formu
+- Site istatistikleri
+- Hızlı erişim linkleri
+
+## 🔧 Geliştirme
+
+### Yeni özellik eklemek için:
+1. `app.py` dosyasında yeni route'lar ekleyin
+2. Gerekli template dosyalarını oluşturun
+3. Veritabanı modellerini güncelleyin
+4. CSS/JS dosyalarını ekleyin
+
+### Veritabanı değişiklikleri:
+```bash
+# Veritabanını sıfırlamak için
+rm spor_sitesi.db
+python app.py
+```
+
+## 📄 Lisans
+
+Bu proje MIT lisansı altında lisanslanmıştır.
+
+## 🤝 Katkıda Bulunma
+
+1. Fork yapın
+2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
+3. Commit yapın (`git commit -m 'Add some AmazingFeature'`)
+4. Push yapın (`git push origin feature/AmazingFeature`)
+5. Pull Request oluşturun
+
+## 📞 İletişim
+
+- Email: info@sporsitesi.com
+- Telefon: +90 555 123 4567
+
+---
+
+**Not**: Bu proje eğitim amaçlı geliştirilmiştir. Gerçek bir spor sitesi için ek güvenlik önlemleri ve optimizasyonlar gerekebilir.
