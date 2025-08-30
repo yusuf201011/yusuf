@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Maç Ekle - Admin Paneli{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="py-5 bg-success text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold">
+                    <i class="fas fa-calendar-plus me-3"></i>Maç Ekle
+                </h1>
+                <p class="lead">Yeni maç programı ekleyin</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add Match Form -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <form method="POST">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="home_team" class="form-label">Ev Sahibi Takım</label>
+                                    <input type="text" class="form-control" id="home_team" name="home_team" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="away_team" class="form-label">Deplasman Takımı</label>
+                                    <input type="text" class="form-control" id="away_team" name="away_team" required>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="sport_type" class="form-label">Spor Türü</label>
+                                    <select class="form-select" id="sport_type" name="sport_type" required>
+                                        <option value="">Spor türü seçin</option>
+                                        <option value="futbol">Futbol</option>
+                                        <option value="basketbol">Basketbol</option>
+                                        <option value="voleybol">Voleybol</option>
+                                        <option value="tenis">Tenis</option>
+                                        <option value="diger">Diğer</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="match_date" class="form-label">Maç Tarihi ve Saati</label>
+                                    <input type="datetime-local" class="form-control" id="match_date" name="match_date" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Bilgi:</strong> Maç eklendikten sonra admin panelinden skor güncellemesi yapabilirsiniz.
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-save me-2"></i>Maçı Kaydet
+                                </button>
+                                <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
